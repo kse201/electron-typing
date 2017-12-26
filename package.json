@@ -1,0 +1,12 @@
+{
+  "name": "electron-typing",
+  "version": "0.0.0",
+  "description": "typing game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["game","electron"],
+  "author": "kse201 <kse.201@gmail.com>",
+  "license": "ISC"
+}
