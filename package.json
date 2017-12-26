@@ -15,9 +15,6 @@
     "gulp": "^3.9.1",
     "gulp-eslint": "^4.0.0"
   },
-  "build" : {
-    "appId" : "com.examlpe.electron-typing"
-  },
   "keywords": [
     "electron",
     "game"
@@ -28,7 +25,7 @@
     "build": "electron-builder build",
     "fixpack": "fixpack",
     "lint": "eslint .",
-    "test": "gulp test",
-    "run": "electron ."
+    "start": "electron ./",
+    "test": "gulp test"
   }
 }
