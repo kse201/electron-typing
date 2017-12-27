@@ -14,6 +14,17 @@ This is template file for `README.md`.
 
 ## Troubleshooting
 
+## For Developers
+
+### Tools
+
+|  Category   |  tool  |
+|:-----------:|:------:|
+| Task runner |  gulp  |
+|   Linter    | eslint |
+|   Testing   |        |
+|  Packaging  |  asar  |
+
 ## FAQ
 
 ## License
