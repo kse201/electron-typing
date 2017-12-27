@@ -1,5 +1,7 @@
 import React from 'react'
+import Timer from './timer'
 
+// TODO remove magic valibles
 const words = [
   'foo',
   'bar',
@@ -10,18 +12,24 @@ const words = [
 export default class App extends React.Component {
   constructor (props) {
     super(props)
-    this.state = this.initData()
+    this.state = {
+      currentWord: '',
+      inputWord: '',
+      isLive: false
+    }
+    this.timer = null
   }
 
-  initData () {
-    return {
-      currentWord: words[Math.floor(Math.random() * words.length)],
-      inputWord: ''
-    }
+  componentWillMount () {
+    document.addEventListener('keyup', (e) => { this.onKeyUp(e) })
+    this.start()
   }
 
   resetText () {
-    this.setState(this.initData())
+    this.setState({
+      currentWord: words[Math.floor(Math.random() * words.length)],
+      inputWord: ''
+    })
   }
 
   checkKey (key) {
@@ -43,7 +51,20 @@ export default class App extends React.Component {
     }
   }
 
+  start () {
+    this.setState({
+      currentWord: words[Math.floor(Math.random() * words.length)],
+      inputWord: '',
+      isLive: true
+    })
+
+    this.timer = <Timer limit='5' onChange={e => this.handleChange(e)}/>
+  }
+
   onKeyUp (e) {
+    if (!this.state.isLive) {
+      return
+    }
     const key = String.fromCharCode(e.keyCode).toLowerCase()
     if (!this.checkKey(key)) {
       return
@@ -58,13 +79,16 @@ export default class App extends React.Component {
     }
   }
 
-  componentWillMount () {
-    document.addEventListener('keyup', (e) => { this.onKeyUp(e) })
+  handleChange (e) {
+    if (!e.isLive) {
+      this.setState({isLive: false})
+    }
   }
 
   render () {
     return (
-      <div>
+      <div className='App'>
+        {this.timer}
         <div>{this.state.currentWord}</div>
         <div>{this.state.inputWord}</div>
       </div>

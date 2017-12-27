@@ -22,7 +22,7 @@ This is template file for `README.md`.
 |:-----------:|:------:|
 | Task runner |  gulp  |
 |   Linter    | eslint |
-|   Testing   |        |
+|   Testing   |  Jest  |
 |  Packaging  |  asar  |
 
 ## FAQ
