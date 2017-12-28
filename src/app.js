@@ -13,7 +13,7 @@ export default class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      currentWord: '',
+      currentWord: 'click to start',
       inputWord: '',
       isLive: false
     }
@@ -22,7 +22,6 @@ export default class App extends React.Component {
 
   componentWillMount () {
     document.addEventListener('keyup', (e) => { this.onKeyUp(e) })
-    this.start()
   }
 
   resetText () {
@@ -79,6 +78,10 @@ export default class App extends React.Component {
     }
   }
 
+  handleClick () {
+    this.start()
+  }
+
   handleChange (e) {
     if (!e.isLive) {
       this.setState({isLive: false})
@@ -87,7 +90,7 @@ export default class App extends React.Component {
 
   render () {
     return (
-      <div className='App'>
+      <div className='App' onClick={(e) => this.handleClick(e)}>
         {this.timer}
         <div>{this.state.currentWord}</div>
         <div>{this.state.inputWord}</div>
