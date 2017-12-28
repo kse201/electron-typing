@@ -1,44 +1,75 @@
-'use strict'
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactTestUtils from 'react-dom/test-utils'
-import TestRenderer from 'react-test-renderer'
 import App from '../src/app'
+import React from 'react'
+import { mount } from 'enzyme'
 
-describe('App', () => {
-  function setup() {
-    const renderer = TestRenderer.create(<App />)
-    const app = renderer.root
+import Enzyme from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+Enzyme.configure({ adapter: new Adapter() });
+
+describe ('App', () => {
+  function setup () {
+    const wrapper = mount(<App />)
+    const btn = wrapper.find('.btn')
+    const curWord = wrapper.find('.currentWord')
+    const inputWord = wrapper.find('.inputWord')
+    const app = wrapper.find('.App')
+
     return {
-      renderer,
-      app
+      wrapper,
+      app,
+      btn,
+      curWord,
+      inputWord
     }
   }
 
-  describe('new', () => {
-    const {app} = setup()
+  describe ('initalize', () => {
+    it ('should be plane', () => {
+      const { btn, curWord } = setup()
 
-    expect(app.instance.state.isLive).toBeFalsy()
-  })
-
-  describe('click', () => {
-    it('should start', () => {
-      const {renderer, app} = setup()
-
-      ReactTestUtils.Simulate.click(ReactTestUtils.findRenderedDOMComponentWithClass(app, 'App'))
-      expect(app.instance.state.isLive).toBeTruthy()
+      expect(btn.text()).toBe('click to start')
+      expect(curWord.text()).toBe('')
     })
   })
 
-  describe('test', () => {
-    it('should start', () => {
-      const tree = ReactTestUtils.renderIntoDocument(<App />)
+  describe ('click', () => {
+    it('should be started', () => {
+      const { btn, curWord } = setup()
 
-      let subject = ReactTestUtils.findRenderedDOMComponentWithClass(tree, 'App')
-      expect(ReactTestUtils.isDOMComponent(subject)).toBeTruthy()
-      ReactTestUtils.Simulate.click(subject)
+      btn.simulate('click')
 
-      expect(subject.instance.state.isLive).toBeTruthy()
+      expect(btn.text()).toBe('')
+      expect(curWord.text()).not.toBe('')
+    })
+  })
+
+  describe ('keyup event', () => {
+    it('input key', () => {
+      const { btn, app, inputWord } = setup()
+
+      btn.simulate('click')
+
+      const word = inputWord.text()
+      app.simulate('keyUp', {
+        target: {
+          key: 'c'
+        }
+      })
+      expect(word).toEqual('c')
+    })
+
+    it('continue next word', () => {
+      const { btn, app, curWord } = setup()
+
+      btn.simulate('click')
+      const word = curWord.text()
+      app.simulate('keyUp', {
+        target: {
+          key: word
+        }
+      })
+      expect(curWord.text()).not.toEqual(word)
     })
   })
 })

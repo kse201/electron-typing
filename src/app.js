@@ -13,15 +13,17 @@ export default class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      currentWord: 'click to start',
+      currentWord: '',
       inputWord: '',
-      isLive: false
+      isLive: false,
+      timer: null
     }
-    this.timer = null
+    this.handleClick = this.handleClick.bind(this)
+    this.handleKeyUp = this.handleKeyUp.bind(this)
   }
 
   componentWillMount () {
-    document.addEventListener('keyup', (e) => { this.onKeyUp(e) })
+    document.addEventListener('keyup', (e) => { this.handleKeyUp(e) })
   }
 
   resetText () {
@@ -51,16 +53,18 @@ export default class App extends React.Component {
   }
 
   start () {
+    if (this.state.timer != null) {
+      this.state.timer.reset()
+    }
     this.setState({
+      timer: <Timer limit='5' onChange={e => this.handleChange(e)}/>,
       currentWord: words[Math.floor(Math.random() * words.length)],
       inputWord: '',
       isLive: true
     })
-
-    this.timer = <Timer limit='5' onChange={e => this.handleChange(e)}/>
   }
 
-  onKeyUp (e) {
+  handleKeyUp (e) {
     if (!this.state.isLive) {
       return
     }
@@ -90,10 +94,13 @@ export default class App extends React.Component {
 
   render () {
     return (
-      <div className='App' onClick={(e) => this.handleClick(e)}>
-        {this.timer}
-        <div>{this.state.currentWord}</div>
-        <div>{this.state.inputWord}</div>
+      <div className='App'>
+        {this.state.timer}
+        <div className='currentWord'>{this.state.currentWord}</div>
+        <div className='inputWord'>{this.state.inputWord}</div>
+        <div className='btn' onClick={this.handleClick}>
+          {this.state.isLive ? '' : 'click to start' }
+        </div>
       </div>
     )
   }
