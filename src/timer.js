@@ -46,6 +46,21 @@ export default class Timer extends React.Component {
     }
   }
 
+  reset () {
+    const currentTime = new Date().getTime()
+
+    this.setState({
+      now: this.props.limit,
+      currentTime: currentTime,
+      endTime: currentTime + this.props.limit * interval,
+      isLive: true
+    })
+
+    this.timerId = setInterval((e) => {
+      this.tick()
+    }, interval)
+  }
+
   getDisp () {
     const s = this.state
     const delta = s.endTime - s.currentTime
