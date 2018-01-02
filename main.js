@@ -1,32 +1,49 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu} = require('electron')
 const path = require('path')
 const url = require('url')
 
 let win
 
+function createMenu () {
+  const menu = Menu.buildFromTemplate([
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Close',
+          click: () => app.quit()
+        }
+      ]
+    }
+  ])
+  Menu.setApplicationMenu(menu)
+}
+
 function createWindow () {
-  win = new BrowserWindow({width: 800, height: 600})
+  win = new BrowserWindow({
+    width: 600,
+    height: 350,
+    resizable: process.env.APP_DEBUG || false
+  })
 
   win.loadURL(url.format({
     pathname: path.join(__dirname, 'app', 'index.html'),
-    protocoy: 'file',
+    protocol: 'file',
     slashes: true
   }))
 
-  win.webContents.openDevTools() // for DEBUG config
+  if (process.env.APP_DEBUG) win.webContents.openDevTools() // for DEBUG config
 
   win.on('closed', () => {
     win = null
   })
+
+  createMenu()
 }
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 app.on('activate', () => {

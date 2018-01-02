@@ -1,7 +1,7 @@
 {
   "name": "electron-typing",
   "description": "typing game",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "author": "kse201 <kse.201@gmail.com>",
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -15,6 +15,7 @@
     "eslint": "^4.14.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jasmine": "^2.9.1",
     "eslint-plugin-node": "^5.2.1",
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-react": "^7.5.1",
@@ -22,7 +23,14 @@
     "fixpack": "^2.3.1",
     "gulp": "^3.9.1",
     "gulp-eslint": "^4.0.0",
+    "gulp-if": "^2.0.2",
+    "gulp-jest": "^3.0.1",
     "jest": "^22.0.4",
+    "jest-cli": "^22.0.4",
+    "prettier": "^1.9.2",
+    "prettier-eslint": "^8.7.0",
+    "prettier-eslint-cli": "^4.7.0",
+    "electron": "^1.7.10",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-test-renderer": "^16.2.0",
@@ -37,15 +45,17 @@
   "license": "ISC",
   "main": "main.js",
   "scripts": {
-    "build": "electron-builder build",
+    "build": "electron-builder -wm",
     "webpack": "webpack",
     "fixpack": "fixpack",
     "lint": "gulp lint",
     "start": "electron ./",
-    "test": "jest",
-    "test-watch": "jest --watch"
+    "debug": "APP_DEBUG=true electron ./",
+    "test": "gulp test",
+    "test-watch": "gulp test-watch"
   },
-  "dependencies": {
-    "electron": "^1.7.10"
+  "build": {
+    "appId": "com.examplep.app",
+    "extraFiles": [ "./app/ejdic-hand-utf8.txt"]
   }
 }

@@ -1,24 +1,24 @@
+/* global alert */
 import React from 'react'
-import Timer from './timer'
+import words from './lib/word'
 
-// TODO remove magic valibles
-const words = [
-  'foo',
-  'bar',
-  'hoge',
-  'fuga'
-]
-
+const interval = 1000
+const time = process.env.APP_DEBUG ? 60 : 30
 export default class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      currentWord: '',
-      inputWord: '',
+      target: '',
+      mean: '',
+      index: 0,
       isLive: false,
+      score: 0,
+      miss: 0,
+      sec: 0,
       timer: null
     }
-    this.handleClick = this.handleClick.bind(this)
+    this.timerId = 0
+    this.start = this.start.bind(this)
     this.handleKeyUp = this.handleKeyUp.bind(this)
   }
 
@@ -26,16 +26,29 @@ export default class App extends React.Component {
     document.addEventListener('keyup', (e) => { this.handleKeyUp(e) })
   }
 
-  resetText () {
+  tick () {
+    let sec = this.state.sec - 1
     this.setState({
-      currentWord: words[Math.floor(Math.random() * words.length)],
-      inputWord: ''
+      sec: sec
+    })
+
+    if (this.state.sec <= 0) {
+      this.finish()
+    }
+  }
+
+  nextText () {
+    const idx = Math.floor(Math.random() * words.length)
+    this.setState({
+      target: words[idx].word,
+      mean: words[idx].mean,
+      index: 0
     })
   }
 
-  checkKey (key) {
-    const idx = this.state.inputWord.length
-    const chr = this.state.currentWord[idx]
+  isCorrectKey (key) {
+    const idx = this.state.index
+    const chr = this.state.target[idx]
 
     if (chr === key) {
       return true
@@ -44,62 +57,104 @@ export default class App extends React.Component {
     }
   }
 
-  checkFinished () {
-    if (this.state.inputWord === this.state.currentWord) {
-      return true
-    } else {
-      return false
-    }
-  }
-
   start () {
-    if (this.state.timer != null) {
-      this.state.timer.reset()
+    if (this.state.isLive) {
+      return
     }
+    const idx = Math.floor(Math.random() * words.length)
     this.setState({
-      timer: <Timer limit='5' onChange={e => this.handleChange(e)}/>,
-      currentWord: words[Math.floor(Math.random() * words.length)],
-      inputWord: '',
+      target: words[idx].word,
+      mean: words[idx].mean,
+      miss: 0,
+      score: 0,
+      index: 0,
+      sec: time,
       isLive: true
     })
+
+    this.timerId = setInterval((e) => {
+      this.tick()
+    }, interval)
+  }
+
+  stop () {
+    this.setState({
+      target: '',
+      mean: '',
+      index: 0,
+      isLive: false,
+      score: 0,
+      miss: 0,
+      timer: null
+    })
+
+    clearInterval(this.timerId)
   }
 
   handleKeyUp (e) {
     if (!this.state.isLive) {
       return
     }
-    const key = String.fromCharCode(e.keyCode).toLowerCase()
-    if (!this.checkKey(key)) {
-      return
-    }
-    let word = this.state.inputWord
 
-    word += key
-    this.setState({inputWord: word})
+    if (this.isCorrectKey(e.key)) {
+      const score = this.state.score + 1
+      let idx = this.state.index + 1
 
-    if (this.checkFinished()) {
-      this.resetText()
+      this.setState({
+        score: score,
+        index: idx
+      })
+
+      if (this.state.index >= this.state.target.length) {
+        this.nextText()
+      }
+    } else {
+      const miss = this.state.miss + 1
+      this.setState({miss: miss})
     }
   }
 
-  handleClick () {
-    this.start()
+  finish () {
+    clearInterval(this.timerId)
+    this.setState({
+      target: '',
+      mean: '',
+      isLive: false
+    })
+    this.result()
   }
 
-  handleChange (e) {
-    if (!e.isLive) {
-      this.setState({isLive: false})
-    }
+  result () {
+    const score = this.state.score
+    const miss = this.state.miss
+    const accuracy = (score + miss) === 0 ? '0.00' : ((score / (score + miss)) * 100).toFixed(2)
+    alert(score + ' letters, ' + miss + ' miss! ' + accuracy + ' % accuracy')
+  }
+
+  targetWord () {
+    const tmp = this.state.target.split('').map((v, i) => {
+      if (i < this.state.index) {
+        return '_'
+      } else {
+        return v
+      }
+    })
+
+    return tmp.join('')
   }
 
   render () {
     return (
-      <div className='App'>
-        {this.state.timer}
-        <div className='currentWord'>{this.state.currentWord}</div>
-        <div className='inputWord'>{this.state.inputWord}</div>
-        <div className='btn' onClick={this.handleClick}>
+      <div className='App' onClick={this.start}>
+        <div className='target hide-cursor'>{this.targetWord()}</div>
+        <div className='target'>
           {this.state.isLive ? '' : 'click to start' }
+        </div>
+        <div className='info'>
+          <div>Mean: {this.state.mean}</div>
+          <div>Letters count: {this.state.score}</div>
+          <div>Miss count: {this.state.miss}</div>
+          <div>Remining Time: {this.state.sec}</div>
         </div>
       </div>
     )
