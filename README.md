@@ -1,6 +1,6 @@
 # electron-typing
 
-![CI Status]()
+[![Build Status](https://travis-ci.org/kse201/electron-typing.svg?branch=master)](https://travis-ci.org/kse201/electron-typing)
 
 ## Description
 This is template file for `README.md`.
