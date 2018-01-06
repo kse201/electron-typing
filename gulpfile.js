@@ -16,12 +16,12 @@ gulp.task('lint', () => {
     .pipe(eslint.failAfterError())
 })
 
-gulp.task('test', () => {
+gulp.task('unit', () => {
   return gulp.src('__test__')
     .pipe(jest({coverage: true}))
 })
 
-gulp.task('test-watch', () => {
+gulp.task('unit-watch', () => {
   return gulp.src('__test__')
     .pipe(jest({
       watch: true,
@@ -33,4 +33,4 @@ gulp.task('clean', (cb) => {
   del(['dist', 'tmp', '__test__/coverage'], cb)
 })
 
-gulp.task('default', ['lint', 'test'])
+gulp.task('test', ['lint', 'unit'])
